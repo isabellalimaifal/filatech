@@ -9,6 +9,8 @@ export interface User {
   cpf: string
   telefone?: string
   email?: string
+  /** Espelha `usuarios.tipo_prioridade` no Supabase. */
+  tipoPrioridade?: string
 }
 
 interface AuthContextType {
@@ -16,7 +18,13 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   login: (cpf: string, senha: string) => Promise<{ success: boolean; error?: string }>
-  register: (data: { nome: string; cpf: string; telefone?: string; senha: string }) => Promise<{ success: boolean; error?: string }>
+  register: (data: {
+    nome: string
+    cpf: string
+    telefone?: string
+    senha: string
+    tipoPrioridade: string
+  }) => Promise<{ success: boolean; error?: string }>
   logout: () => void
 }
 
@@ -66,7 +74,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for stored user on mount
     const storedUser = localStorage.getItem("filadigital_user")
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      try {
+        const parsed = JSON.parse(storedUser) as User
+        setUser({
+          ...parsed,
+          tipoPrioridade: parsed.tipoPrioridade ?? "Nenhuma",
+        })
+      } catch {
+        /* ignore */
+      }
     }
     setIsLoading(false)
   }, [])
@@ -90,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         cpf: data.cpf,
         telefone: data.telefone ?? undefined,
         email: data.email ?? undefined,
+        tipoPrioridade: data.tipo_prioridade ?? "Nenhuma",
       }
 
       setUser(dbUser)
@@ -119,9 +136,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         cpf: cpfDigits,
         telefone: data.telefone || null,
         senha: data.senha,
+        tipo_prioridade: data.tipoPrioridade,
       }
 
-      const { error: insertError } = await supabase.from("usuarios").insert(insertPayload)
+      const { data: insertedRow, error: insertError } = await supabase
+        .from("usuarios")
+        .insert(insertPayload)
+        .select("id, tipo_prioridade")
+        .single()
+
       if (insertError) {
         console.error("Register insert error:", insertError)
         return {
@@ -131,10 +154,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const newUser: User = {
-        id: `local-${Date.now()}`,
+        id: insertedRow?.id != null ? String(insertedRow.id) : `local-${Date.now()}`,
         nome: data.nome,
         cpf: cpfDigits,
         telefone: data.telefone ?? undefined,
+        tipoPrioridade: insertedRow?.tipo_prioridade ?? data.tipoPrioridade,
       }
 
       setUser(newUser)

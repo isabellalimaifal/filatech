@@ -7,7 +7,20 @@ import { ArrowLeft, Check, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
+import {
+  FieldGroup,
+  Field,
+  FieldLabel,
+  FieldDescription,
+} from "@/components/ui/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { OPCOES_NECESSIDADES_ESPECIAIS } from "@/lib/prioridade"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/lib/auth-context"
 import { toast } from "sonner"
@@ -35,6 +48,7 @@ export default function CadastroPage() {
   const [cpf, setCpf] = useState("")
   const [telefone, setTelefone] = useState("")
   const [senha, setSenha] = useState("")
+  const [necessidadesEspeciais, setNecessidadesEspeciais] = useState<string>("Nenhuma")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +60,7 @@ export default function CadastroPage() {
       cpf,
       telefone,
       senha,
+      tipoPrioridade: necessidadesEspeciais,
     })
 
     if (result.success) {
@@ -82,10 +97,10 @@ export default function CadastroPage() {
 
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              Complete seu Cadastro
+              Bem-vindo ao FilaTech
             </h1>
             <p className="text-muted-foreground">
-              Preencha seus dados para utilizar o FilaDigital
+              Complete seu cadastro para criar sua conta e usar as filas virtuais
             </p>
           </div>
 
@@ -131,6 +146,37 @@ export default function CadastroPage() {
                   onChange={(e) => setTelefone(formatPhone(e.target.value))}
                   className="h-12"
                 />
+              </Field>
+
+              <Field>
+                <FieldLabel id="necessidades-especiais-label" htmlFor="necessidades-especiais">
+                  Necessidades Especiais
+                </FieldLabel>
+                <FieldDescription id="necessidades-especiais-hint">
+                  Informação opcional para priorização legal no atendimento presencial. Se não se
+                  aplicar, mantenha Nenhuma.
+                </FieldDescription>
+                <Select
+                  value={necessidadesEspeciais}
+                  onValueChange={setNecessidadesEspeciais}
+                  name="necessidades_especiais"
+                >
+                  <SelectTrigger
+                    id="necessidades-especiais"
+                    className="h-12 w-full"
+                    aria-labelledby="necessidades-especiais-label"
+                    aria-describedby="necessidades-especiais-hint"
+                  >
+                    <SelectValue placeholder="Selecione uma opção" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OPCOES_NECESSIDADES_ESPECIAIS.map((opt) => (
+                      <SelectItem key={opt} value={opt}>
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
 
               <Field>
@@ -181,7 +227,7 @@ export default function CadastroPage() {
 
       {/* Footer */}
       <p className="mt-8 text-center text-xs text-muted-foreground">
-        FilaDigital GOVTECH - Portal Oficial do Governo Digital
+        FilaTech — Filas virtuais para serviços públicos
       </p>
     </div>
   )

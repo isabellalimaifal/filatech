@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -16,7 +16,6 @@ const NAV_ITEMS = [
 
 export function Header() {
   const pathname = usePathname()
-  const router = useRouter()
   const { isAuthenticated } = useAuth()
 
   return (
@@ -39,50 +38,47 @@ export function Header() {
             </svg>
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-foreground">FilaDigital</span>
-            <span className="text-xs font-medium text-primary">GOVTECH</span>
+            <span className="text-lg font-bold text-foreground">FilaTech</span>
+            <span className="text-xs font-medium text-primary">Filas virtuais</span>
           </div>
         </Link>
 
-        {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        {/* Navigation — visível em telas pequenas com rolagem horizontal */}
+        <nav className="flex max-w-[45%] sm:max-w-none items-center gap-1 overflow-x-auto md:overflow-visible [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-1 md:justify-center">
           {NAV_ITEMS.map((item) => (
-            <button
+            <Link
               key={item.href}
-              type="button"
-              onClick={() => router.push(item.href)}
+              href={item.href}
               className={cn(
-                "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
+                "shrink-0 px-3 py-2 text-sm font-medium rounded-lg transition-colors md:px-4",
                 pathname === item.href
                   ? "bg-primary/10 text-primary border border-primary/20"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
               {item.label}
-            </button>
+            </Link>
           ))}
         </nav>
 
         {/* Profile */}
         {isAuthenticated ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/perfil")}
-            className={cn(
-              "rounded-full",
-              pathname === "/perfil" && "bg-primary/10 text-primary"
-            )}
-          >
-            <User className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="shrink-0 rounded-full" asChild>
+            <Link
+              href="/perfil"
+              className={cn(
+                pathname === "/perfil" && "bg-primary/10 text-primary"
+              )}
+            >
+              <User className="h-5 w-5" />
+            </Link>
           </Button>
         ) : (
-          <Link href="/login">
-            <Button className="gap-2">
+          <Button className="shrink-0 gap-2" asChild>
+            <Link href="/login">
               <span>Entrar</span>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         )}
       </div>
     </header>

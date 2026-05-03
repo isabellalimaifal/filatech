@@ -49,7 +49,7 @@ const FAQ_ITEMS = [
   {
     question: "Como funciona a fila virtual?",
     answer:
-      "A fila virtual do FilaDigital permite que você entre na fila de atendimento de qualquer órgão público sem precisar estar fisicamente no local. Basta selecionar a unidade, escolher o serviço desejado e confirmar sua entrada. Você receberá um ticket com sua posição e poderá acompanhar em tempo real quando será sua vez.",
+      "A fila virtual do FilaTech permite que você entre na fila de atendimento de qualquer órgão público sem precisar estar fisicamente no local. Basta selecionar a unidade, escolher o serviço desejado e confirmar sua entrada. Você receberá um ticket com sua posição e poderá acompanhar em tempo real quando será sua vez.",
   },
   {
     question: "Posso entrar em mais de uma fila ao mesmo tempo?",
@@ -59,7 +59,7 @@ const FAQ_ITEMS = [
   {
     question: "Como recebo notificações sobre minha vez?",
     answer:
-      "Você pode ativar as notificações clicando no botão 'Solicitar Notificação' no seu ticket ativo. Quando sua vez estiver próxima, você receberá um alerta no navegador ou celular. Certifique-se de permitir notificações do FilaDigital no seu dispositivo.",
+      "Você pode ativar as notificações clicando no botão 'Solicitar Notificação' no seu ticket ativo. Quando sua vez estiver próxima, você receberá um alerta no navegador ou celular. Certifique-se de permitir notificações do FilaTech no seu dispositivo.",
   },
   {
     question: "O que acontece se eu perder minha vez?",
@@ -69,7 +69,7 @@ const FAQ_ITEMS = [
   {
     question: "O serviço é gratuito?",
     answer:
-      "Sim! O FilaDigital é um serviço público completamente gratuito, oferecido pelo governo para facilitar o acesso da população aos serviços públicos e reduzir o tempo de espera presencial.",
+      "Sim! O FilaTech é um serviço público completamente gratuito, oferecido pelo governo para facilitar o acesso da população aos serviços públicos e reduzir o tempo de espera presencial.",
   },
 ]
 
@@ -82,7 +82,7 @@ const CONTACT_OPTIONS = [
   {
     icon: Mail,
     title: "E-mail",
-    value: "suporte@filadigital.gov.br",
+    value: "suporte@filatech.gov.br",
   },
   {
     icon: MessageCircle,
@@ -124,7 +124,7 @@ export default function AjudaPage() {
             Como podemos ajudar?
           </h1>
           <p className="text-muted-foreground">
-            Encontre respostas para as dúvidas mais frequentes sobre o FilaDigital.
+            Encontre respostas para as dúvidas mais frequentes sobre o FilaTech.
           </p>
         </div>
 

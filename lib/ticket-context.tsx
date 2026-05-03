@@ -3,6 +3,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import { useAuth } from "./auth-context"
 import { supabase } from "./supabase-client"
+import {
+  usuarioTemPrioridadeNaFila,
+  type PrioridadeAtendimentoTicket,
+} from "./prioridade"
 
 export interface Ticket {
   id: string
@@ -19,6 +23,8 @@ export interface Ticket {
   status: "ativo" | "chamado" | "concluido" | "cancelado"
   dataEntrada: string
   dataConclusao?: string
+  /** Espelha `tickets.prioridade_atendimento` no Supabase. */
+  prioridadeAtendimento: PrioridadeAtendimentoTicket
 }
 
 export interface TicketHistory extends Ticket {
@@ -46,6 +52,12 @@ function getErrorMessage(error: unknown, fallback: string) {
     if (message) return message
   }
   return fallback
+}
+
+function normalizePrioridade(
+  value: PrioridadeAtendimentoTicket | undefined
+): PrioridadeAtendimentoTicket {
+  return value === "Prioritário" ? "Prioritário" : "Normal"
 }
 
 // Mock data for units
@@ -124,6 +136,10 @@ export function TicketProvider({ children }: { children: ReactNode }) {
           tipo: dbActiveTicket.unidade_tipo || "Serviço Público",
         }
 
+        const prioridadeRaw = dbActiveTicket.prioridade_atendimento as string | undefined
+        const prioridadeAtendimento: PrioridadeAtendimentoTicket =
+          prioridadeRaw === "Prioritário" ? "Prioritário" : "Normal"
+
         const formattedTicket: Ticket = {
           id: String(dbActiveTicket.id),
           codigo: dbActiveTicket.codigo,
@@ -139,6 +155,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
           status: dbActiveTicket.status,
           dataEntrada: dbActiveTicket.data_entrada,
           dataConclusao: dbActiveTicket.data_conclusao ?? undefined,
+          prioridadeAtendimento,
         }
         setActiveTicket(formattedTicket)
         localStorage.setItem("filadigital_active_ticket", JSON.stringify(formattedTicket))
@@ -162,6 +179,10 @@ export function TicketProvider({ children }: { children: ReactNode }) {
               nome: item.unidade_nome || "Unidade",
               tipo: item.unidade_tipo || "Serviço Público",
             }
+            const pRaw = item.prioridade_atendimento as string | undefined
+            const prioridadeAtendimento: PrioridadeAtendimentoTicket =
+              pRaw === "Prioritário" ? "Prioritário" : "Normal"
+
             return {
               id: String(item.id),
               codigo: item.codigo,
@@ -177,6 +198,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
               status: item.status,
               dataEntrada: item.data_entrada,
               dataConclusao: item.data_conclusao,
+              prioridadeAtendimento,
             }
           })
 
@@ -187,12 +209,30 @@ export function TicketProvider({ children }: { children: ReactNode }) {
       // Fallback cache on localStorage if there is no persisted data
       const storedTicket = localStorage.getItem("filadigital_active_ticket")
       if (storedTicket && !dbActiveTicket) {
-        setActiveTicket(JSON.parse(storedTicket))
+        try {
+          const parsed = JSON.parse(storedTicket) as Ticket
+          setActiveTicket({
+            ...parsed,
+            prioridadeAtendimento: normalizePrioridade(parsed.prioridadeAtendimento),
+          })
+        } catch {
+          /* ignore */
+        }
       }
 
       const storedHistory = localStorage.getItem("filadigital_ticket_history")
       if (storedHistory && (!dbHistory || dbHistory.length === 0)) {
-        setTicketHistory(JSON.parse(storedHistory))
+        try {
+          const parsedList = JSON.parse(storedHistory) as TicketHistory[]
+          setTicketHistory(
+            parsedList.map((h) => ({
+              ...h,
+              prioridadeAtendimento: normalizePrioridade(h.prioridadeAtendimento),
+            }))
+          )
+        } catch {
+          /* ignore */
+        }
       } else if (!storedHistory && (!dbHistory || dbHistory.length === 0)) {
         // Mock history data
         const mockHistory: TicketHistory[] = [
@@ -207,6 +247,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
             status: "concluido",
             dataEntrada: "2026-03-20T10:15:00",
             dataConclusao: "2026-03-20T11:02:00",
+            prioridadeAtendimento: "Normal",
           },
           {
             id: "h2",
@@ -219,6 +260,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
             status: "concluido",
             dataEntrada: "2026-03-18T08:45:00",
             dataConclusao: "2026-03-18T09:20:00",
+            prioridadeAtendimento: "Normal",
           },
           {
             id: "h3",
@@ -231,6 +273,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
             status: "concluido",
             dataEntrada: "2026-03-15T14:00:00",
             dataConclusao: "2026-03-15T14:25:00",
+            prioridadeAtendimento: "Normal",
           },
         ]
         setTicketHistory(mockHistory)
@@ -250,6 +293,9 @@ export function TicketProvider({ children }: { children: ReactNode }) {
       const unit = MOCK_UNITS[unidadeId]
       if (!unit) return { success: false, error: "Unidade inválida." }
 
+      const prioridadeAtendimento: PrioridadeAtendimentoTicket =
+        usuarioTemPrioridadeNaFila(user.tipoPrioridade) ? "Prioritário" : "Normal"
+
       const ticketNumber = Math.floor(Math.random() * 9000) + 1000
       const posicao = Math.floor(Math.random() * 20) + 5
       const pessoasFrente = posicao - 1
@@ -268,6 +314,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         tempoEstimado: pessoasFrente * 2,
         status: "ativo",
         dataEntrada: new Date().toISOString(),
+        prioridadeAtendimento,
       }
 
       const cpf = normalizeCpf(user.cpf)
@@ -283,6 +330,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         tempo_estimado: pessoasFrente * 2,
         status: "ativo",
         data_entrada: newTicket.dataEntrada,
+        prioridade_atendimento: prioridadeAtendimento,
       })
 
       if (insertError) {

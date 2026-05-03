@@ -48,7 +48,7 @@ export function ActiveTicketCard() {
     <Card className="overflow-hidden border-0 shadow-lg">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary to-accent p-4 text-primary-foreground">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
               <svg
@@ -69,12 +69,22 @@ export function ActiveTicketCard() {
               <p className="text-base font-bold">{activeTicket.codigo}</p>
             </div>
           </div>
-          <Badge
-            variant="secondary"
-            className="bg-white/20 text-white border-0 hover:bg-white/30"
-          >
-            EM ANDAMENTO
-          </Badge>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {activeTicket.prioridadeAtendimento === "Prioritário" && (
+              <Badge
+                aria-label="Senha prioritária para atendimento"
+                className="border-0 bg-amber-400 px-3 py-1 text-xs font-extrabold tracking-wider text-amber-950 shadow-md ring-2 ring-amber-200/80"
+              >
+                PRIORIDADE
+              </Badge>
+            )}
+            <Badge
+              variant="secondary"
+              className="bg-white/20 text-white border-0 hover:bg-white/30"
+            >
+              EM ANDAMENTO
+            </Badge>
+          </div>
         </div>
       </div>
 

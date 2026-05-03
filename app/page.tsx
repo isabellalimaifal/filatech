@@ -45,7 +45,7 @@ export default function HomePage() {
             <span className="text-sm font-medium">Painel do Cidadão</span>
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Bem-vindo ao FilaDigital
+            Bem-vindo ao FilaTech
           </h1>
           <p className="text-muted-foreground">
             Gerencie suas filas virtuais de forma simples e rápida.
@@ -70,12 +70,12 @@ export default function HomePage() {
                 Pontos de atendimento disponíveis próximos a você
               </p>
             </div>
-            <Link href="/unidades">
-              <Button variant="ghost" className="gap-2 text-primary">
+            <Button variant="ghost" className="gap-2 text-primary" asChild>
+              <Link href="/unidades">
                 Ver Todas
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -99,15 +99,16 @@ export default function HomePage() {
               Economize tempo e evite filas presenciais. Acompanhe sua posição em
               tempo real de qualquer lugar.
             </p>
-            <Link href="/unidades">
-              <Button
-                variant="secondary"
-                className="bg-white text-primary hover:bg-white/90 gap-2"
-              >
+            <Button
+              variant="secondary"
+              className="bg-white text-primary hover:bg-white/90 gap-2"
+              asChild
+            >
+              <Link href="/unidades">
                 Explorar Unidades
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
 
           {/* Decorative illustration placeholder */}

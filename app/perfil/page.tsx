@@ -87,6 +87,12 @@ export default function PerfilPage() {
                 <p className="text-sm text-muted-foreground">
                   CPF: {user?.cpf || "---"}
                 </p>
+                {user?.tipoPrioridade && user.tipoPrioridade !== "Nenhuma" && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Necessidades especiais:{" "}
+                    <span className="font-medium text-foreground">{user.tipoPrioridade}</span>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -157,11 +163,11 @@ export default function PerfilPage() {
                 <rect x="14" y="14" width="7" height="7" rx="1" />
               </svg>
             </div>
-            <span className="font-semibold text-foreground">FilaDigital</span>
-            <span className="text-primary text-sm">GOVTECH</span>
+            <span className="font-semibold text-foreground">FilaTech</span>
+            <span className="text-primary text-sm">Filas virtuais</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Versão 1.0.0 • Portal Oficial do Governo Digital
+            Versão 1.0.0 • FilaTech — serviços públicos
           </p>
         </div>
       </main>

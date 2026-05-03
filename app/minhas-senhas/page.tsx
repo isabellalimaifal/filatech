@@ -48,13 +48,23 @@ function ActiveTicketItem({ ticket }: { ticket: TicketType }) {
                 </h3>
                 <p className="text-sm text-muted-foreground">{ticket.servico}</p>
               </div>
-              <Badge
-                variant="outline"
-                className="bg-green-50 text-green-700 border-green-200"
-              >
-                <Clock className="h-3 w-3 mr-1" />
-                Ativo
-              </Badge>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {ticket.prioridadeAtendimento === "Prioritário" && (
+                  <Badge
+                    aria-label="Senha prioritária para atendimento"
+                    className="border-0 bg-amber-400 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wider text-amber-950 shadow-sm ring-2 ring-amber-200/80"
+                  >
+                    PRIORIDADE
+                  </Badge>
+                )}
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 text-green-700 border-green-200"
+                >
+                  <Clock className="h-3 w-3 mr-1" />
+                  Ativo
+                </Badge>
+              </div>
             </div>
             
             <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
@@ -99,13 +109,23 @@ function HistoryTicketItem({ ticket }: { ticket: TicketHistory }) {
                 </h3>
                 <p className="text-sm text-muted-foreground">{ticket.servico}</p>
               </div>
-              <Badge
-                variant="outline"
-                className="bg-blue-50 text-blue-700 border-blue-200"
-              >
-                <CheckCircle className="h-3 w-3 mr-1" />
-                Concluído
-              </Badge>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {ticket.prioridadeAtendimento === "Prioritário" && (
+                  <Badge
+                    aria-label="Registro de senha prioritária"
+                    className="border-0 bg-amber-400 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wider text-amber-950 shadow-sm ring-2 ring-amber-200/80"
+                  >
+                    PRIORIDADE
+                  </Badge>
+                )}
+                <Badge
+                  variant="outline"
+                  className="bg-blue-50 text-blue-700 border-blue-200"
+                >
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Concluído
+                </Badge>
+              </div>
             </div>
             
             <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">

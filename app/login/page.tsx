@@ -64,8 +64,8 @@ export default function LoginPage() {
           </svg>
         </div>
         <div className="flex flex-col">
-          <span className="text-xl font-bold text-foreground">FilaDigital</span>
-          <span className="text-xs font-medium text-primary">GOVTECH</span>
+          <span className="text-xl font-bold text-foreground">FilaTech</span>
+          <span className="text-xs font-medium text-primary">Filas virtuais</span>
         </div>
       </Link>
 
@@ -73,10 +73,10 @@ export default function LoginPage() {
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-foreground mb-2">
-              Bem-vindo de volta
+              Bem-vindo ao FilaTech
             </h1>
             <p className="text-muted-foreground">
-              Entre com suas credenciais para acessar
+              Entre com suas credenciais para acessar suas filas virtuais
             </p>
           </div>
 
@@ -177,7 +177,7 @@ export default function LoginPage() {
 
       {/* Footer */}
       <p className="mt-8 text-center text-xs text-muted-foreground">
-        FilaDigital GOVTECH - Portal Oficial do Governo Digital
+        FilaTech — Filas virtuais para serviços públicos
       </p>
     </div>
   )

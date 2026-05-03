@@ -4,7 +4,7 @@ import { Providers } from '@/components/providers'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'FilaDigital GOVTECH - Filas Virtuais para Serviços Públicos',
+  title: 'FilaTech — Filas virtuais para serviços públicos',
   description: 'Gerencie suas filas virtuais de forma simples e rápida. Acompanhe sua posição em tempo real.',
   generator: 'v0.app',
   icons: {
