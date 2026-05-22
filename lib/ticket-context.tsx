@@ -25,6 +25,12 @@ export interface Ticket {
   dataConclusao?: string
   /** Espelha `tickets.prioridade_atendimento` no Supabase. */
   prioridadeAtendimento: PrioridadeAtendimentoTicket
+  guiche?: string
+}
+
+export interface CalledTicketInfo {
+  codigo: string
+  guiche: string
 }
 
 export interface TicketHistory extends Ticket {
@@ -35,9 +41,11 @@ interface TicketContextType {
   activeTicket: Ticket | null
   ticketHistory: TicketHistory[]
   isLoading: boolean
+  calledTicket: CalledTicketInfo | null
   enterQueue: (unidadeId: string, servicoId: string) => Promise<{ success: boolean; error?: string }>
   cancelTicket: () => Promise<boolean>
   refreshTicket: () => Promise<void>
+  dismissCalledTicket: () => void
 }
 
 const TicketContext = createContext<TicketContextType | undefined>(undefined)
@@ -75,6 +83,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
   const [ticketHistory, setTicketHistory] = useState<TicketHistory[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [calledTicket, setCalledTicket] = useState<CalledTicketInfo | null>(null)
 
   // Load ticket data on mount and when user changes
   useEffect(() => {
@@ -87,7 +96,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
     }
   }, [isAuthenticated, user])
 
-  // Simulate real-time updates
+  // Simulate position updates
   useEffect(() => {
     if (!activeTicket) return
 
@@ -112,6 +121,45 @@ export function TicketProvider({ children }: { children: ReactNode }) {
 
     return () => clearInterval(interval)
   }, [activeTicket?.id])
+
+  // Real-time subscription: listen for ticket status changes
+  useEffect(() => {
+    if (!user || !activeTicket) return
+
+    const cpf = normalizeCpf(user.cpf)
+    const channel = supabase
+      .channel(`citizen-ticket-${activeTicket.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "tickets",
+          filter: `cpf=eq.${cpf}`,
+        },
+        (payload) => {
+          const newRow = payload.new as Record<string, unknown>
+          if (
+            String(newRow.id) === activeTicket.id &&
+            newRow.status === "chamado"
+          ) {
+            const guiche = (newRow.guiche as string) || "Guichê de Atendimento"
+            setCalledTicket({ codigo: activeTicket.codigo, guiche })
+            setActiveTicket(null)
+            localStorage.removeItem("filadigital_active_ticket")
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user, activeTicket?.id])
+
+  const dismissCalledTicket = () => {
+    setCalledTicket(null)
+  }
 
   const loadTicketData = async () => {
     setIsLoading(true)
@@ -403,9 +451,11 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         activeTicket,
         ticketHistory,
         isLoading,
+        calledTicket,
         enterQueue,
         cancelTicket,
         refreshTicket,
+        dismissCalledTicket,
       }}
     >
       {children}

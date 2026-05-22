@@ -5,6 +5,7 @@ import { AuthProvider } from "@/lib/auth-context"
 import { TicketProvider } from "@/lib/ticket-context"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { TicketCalledListener } from "@/components/ticket-called-listener"
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <AuthProvider>
         <TicketProvider>
           {children}
+          <TicketCalledListener />
           <Toaster position="bottom-right" />
         </TicketProvider>
       </AuthProvider>
