@@ -160,7 +160,7 @@ export default function AdminPage() {
         .from("tickets")
         .update({
           status: "chamado",
-          guiche: "Guichê Principal",
+          guiche_atendimento: "Guichê Principal",
         })
         .eq("id", nextTicket.id)
         .eq("status", "ativo")

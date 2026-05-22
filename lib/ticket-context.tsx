@@ -143,7 +143,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
             String(newRow.id) === activeTicket.id &&
             newRow.status === "chamado"
           ) {
-            const guiche = (newRow.guiche as string) || "Guichê de Atendimento"
+            const guiche = (newRow.guiche_atendimento as string) || "Guichê de Atendimento"
             setCalledTicket({ codigo: activeTicket.codigo, guiche })
             setActiveTicket(null)
             localStorage.removeItem("filadigital_active_ticket")

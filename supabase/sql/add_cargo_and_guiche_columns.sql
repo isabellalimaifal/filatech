@@ -8,8 +8,9 @@ comment on column public.usuarios.cargo is
   'Papel do usuário: cidadao (padrão) ou admin (atendente).';
 
 -- Coluna de guichê no ticket para registrar onde o cidadão foi chamado
+-- (a coluna pode já existir como guiche_atendimento dependendo do schema)
 alter table public.tickets
-  add column if not exists guiche text;
+  add column if not exists guiche_atendimento text;
 
-comment on column public.tickets.guiche is
+comment on column public.tickets.guiche_atendimento is
   'Guichê ou mesa para onde o cidadão foi chamado (ex: Guichê Principal).';
