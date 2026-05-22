@@ -38,7 +38,7 @@ export default function AdminPage() {
     if (authLoading) return
 
     if (!isAuthenticated || !user) {
-      router.push("/login")
+      router.push("/admin/login")
       return
     }
 

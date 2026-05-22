@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { LogIn, Eye, EyeOff } from "lucide-react"
+import { LogIn, Eye, EyeOff, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -175,8 +175,17 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
+      {/* Admin Login Link */}
+      <Link
+        href="/admin/login"
+        className="mt-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <Shield className="h-4 w-4" />
+        Área do Funcionário
+      </Link>
+
       {/* Footer */}
-      <p className="mt-8 text-center text-xs text-muted-foreground">
+      <p className="mt-4 text-center text-xs text-muted-foreground">
         FilaTech — Filas virtuais para serviços públicos
       </p>
     </div>
