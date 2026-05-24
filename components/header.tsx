@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 
 const NAV_ITEMS = [
-  { href: "/", label: "Início" },
-  { href: "/unidades", label: "Ver Unidades" },
+  { href: "/unidades", label: "Início" },
   { href: "/minhas-senhas", label: "Minhas Senhas" },
   { href: "/ajuda", label: "Ajuda" },
 ]
@@ -22,7 +21,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/unidades" className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent">
             <svg
               viewBox="0 0 24 24"

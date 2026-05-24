@@ -176,6 +176,7 @@ export default function AdminPage() {
         `Ticket ${nextTicket.codigo} chamado para o Guichê Principal!`
       )
       await loadTickets()
+
     } catch (err) {
       console.error("Erro inesperado:", err)
       toast.error("Erro inesperado ao chamar próximo cidadão.")

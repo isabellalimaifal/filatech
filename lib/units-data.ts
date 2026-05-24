@@ -79,9 +79,9 @@ export const UNITS: Unit[] = [
   },
 ]
 
-export function getUnitsByType(tipo: string | null): Unit[] {
-  if (!tipo || tipo === "Todos") return UNITS
-  return UNITS.filter((unit) => unit.tipo === tipo)
+export function getUnitsByType(tipo: string | null, unitsList: Unit[] = UNITS): Unit[] {
+  if (!tipo || tipo === "Todos") return unitsList
+  return unitsList.filter((unit) => unit.tipo === tipo)
 }
 
 export function searchUnits(query: string, units: Unit[]): Unit[] {
@@ -92,4 +92,53 @@ export function searchUnits(query: string, units: Unit[]): Unit[] {
       unit.endereco.toLowerCase().includes(lowerQuery) ||
       unit.tipo.toLowerCase().includes(lowerQuery)
   )
+}
+
+// Função para buscar o número real de pessoas na fila por unidade do Supabase
+export async function getRealQueueCountByUnit(unidadeId: string): Promise<number> {
+  try {
+    const { supabase } = await import("./supabase-client")
+    const { data, error } = await supabase
+      .from("tickets")
+      .select("id")
+      .eq("unidade_id", unidadeId)
+      .eq("status", "ativo")
+    
+    if (error) {
+      console.error("Erro ao buscar contagem da fila:", error)
+      return 0
+    }
+    
+    return data?.length || 0
+  } catch (error) {
+    console.error("Erro inesperado ao buscar contagem da fila:", error)
+    return 0
+  }
+}
+
+// Função para buscar o número real de pessoas na fila para todas as unidades
+export async function getAllRealQueueCounts(): Promise<Record<string, number>> {
+  try {
+    const { supabase } = await import("./supabase-client")
+    const { data, error } = await supabase
+      .from("tickets")
+      .select("unidade_id")
+      .eq("status", "ativo")
+    
+    if (error) {
+      console.error("Erro ao buscar contagens das filas:", error)
+      return {}
+    }
+    
+    const counts: Record<string, number> = {}
+    data?.forEach((ticket) => {
+      const unidadeId = String(ticket.unidade_id)
+      counts[unidadeId] = (counts[unidadeId] || 0) + 1
+    })
+    
+    return counts
+  } catch (error) {
+    console.error("Erro inesperado ao buscar contagens das filas:", error)
+    return {}
+  }
 }

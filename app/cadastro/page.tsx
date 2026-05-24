@@ -65,7 +65,7 @@ export default function CadastroPage() {
 
     if (result.success) {
       toast.success("Cadastro realizado com sucesso!")
-      router.push("/")
+      router.push("/unidades")
     } else {
       toast.error(result.error || "Erro ao realizar cadastro")
     }

@@ -96,31 +96,80 @@ export function TicketProvider({ children }: { children: ReactNode }) {
     }
   }, [isAuthenticated, user])
 
-  // Simulate position updates
+  // Real-time position updates based on actual database queries
   useEffect(() => {
-    if (!activeTicket) return
+    if (!activeTicket || !user) return
 
-    const interval = setInterval(() => {
-      setActiveTicket((prev) => {
-        if (!prev || prev.posicao <= 1) return prev
-        const newPosicao = Math.max(1, prev.posicao - 1)
-        const newPessoasFrente = Math.max(0, prev.pessoasFrente - 1)
-        const newTempoEstimado = Math.max(2, newPessoasFrente * 2)
-        
-        const updated = {
-          ...prev,
-          posicao: newPosicao,
-          pessoasFrente: newPessoasFrente,
-          tempoEstimado: newTempoEstimado,
+    const refreshPosition = async () => {
+      try {
+        const cpf = normalizeCpf(user.cpf)
+        const { data: currentTicket, error } = await supabase
+          .from("tickets")
+          .select("*")
+          .eq("cpf", cpf)
+          .eq("codigo", activeTicket.codigo)
+          .eq("status", "ativo")
+          .maybeSingle()
+
+        if (error) {
+          console.error("Error refreshing ticket position:", error)
+          return
         }
-        
-        localStorage.setItem("filadigital_active_ticket", JSON.stringify(updated))
-        return updated
-      })
-    }, 30000) // Update every 30 seconds
+
+        if (currentTicket) {
+          let pessoasFrente = 0
+          const prioridadeAtendimento = currentTicket.prioridade_atendimento as string
+
+          if (prioridadeAtendimento === "Prioritário") {
+            const { data: priorityTickets } = await supabase
+              .from("tickets")
+              .select("id, data_entrada")
+              .eq("unidade_id", String(currentTicket.unidade_id))
+              .eq("status", "ativo")
+              .eq("prioridade_atendimento", "Prioritário")
+              .lt("data_entrada", currentTicket.data_entrada)
+            
+            if (priorityTickets) {
+              pessoasFrente = priorityTickets.length
+            }
+          } else {
+            const { data: allTickets } = await supabase
+              .from("tickets")
+              .select("id, data_entrada")
+              .eq("unidade_id", String(currentTicket.unidade_id))
+              .eq("status", "ativo")
+              .lt("data_entrada", currentTicket.data_entrada)
+            
+            if (allTickets) {
+              pessoasFrente = allTickets.length
+            }
+          }
+
+          const posicao = pessoasFrente + 1
+          const tempoEstimado = pessoasFrente * 2
+
+          setActiveTicket((prev) => {
+            if (!prev) return null
+            const updated = {
+              ...prev,
+              posicao,
+              pessoasFrente,
+              tempoEstimado,
+            }
+            localStorage.setItem("filadigital_active_ticket", JSON.stringify(updated))
+            return updated
+          })
+        }
+      } catch (error) {
+        console.error("Error in position refresh:", error)
+      }
+    }
+
+    refreshPosition()
+    const interval = setInterval(refreshPosition, 30000)
 
     return () => clearInterval(interval)
-  }, [activeTicket?.id])
+  }, [activeTicket?.id, activeTicket?.codigo, user])
 
   // Real-time subscription: listen for ticket status changes
   useEffect(() => {
@@ -345,8 +394,35 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         usuarioTemPrioridadeNaFila(user.tipoPrioridade) ? "Prioritário" : "Normal"
 
       const ticketNumber = Math.floor(Math.random() * 9000) + 1000
-      const posicao = Math.floor(Math.random() * 20) + 5
-      const pessoasFrente = posicao - 1
+      // Calculate real position based on actual tickets in database
+      let pessoasFrente = 0
+      
+      if (prioridadeAtendimento === "Prioritário") {
+        // For priority users, count only priority tickets ahead
+        const { data: priorityTickets, error: priorityError } = await supabase
+          .from("tickets")
+          .select("id")
+          .eq("unidade_id", unidadeId)
+          .eq("status", "ativo")
+          .eq("prioridade_atendimento", "Prioritário")
+        
+        if (!priorityError && priorityTickets) {
+          pessoasFrente = priorityTickets.length
+        }
+      } else {
+        // For normal users, count all active tickets (priority + normal)
+        const { data: allTickets, error: allError } = await supabase
+          .from("tickets")
+          .select("id")
+          .eq("unidade_id", unidadeId)
+          .eq("status", "ativo")
+        
+        if (!allError && allTickets) {
+          pessoasFrente = allTickets.length
+        }
+      }
+
+      const posicao = pessoasFrente + 1
 
       const newTicket: Ticket = {
         id: `ticket-${Date.now()}`,
@@ -366,20 +442,24 @@ export function TicketProvider({ children }: { children: ReactNode }) {
       }
 
       const cpf = normalizeCpf(user.cpf)
-      const { error: insertError } = await supabase.from("tickets").insert({
-        codigo: newTicket.codigo,
-        cpf: cpf,
-        unidade_id: unidadeId,
-        unidade_nome: unit.nome,
-        unidade_tipo: unit.tipo,
-        servico: servico,
-        posicao: posicao,
-        pessoas_frente: pessoasFrente,
-        tempo_estimado: pessoasFrente * 2,
-        status: "ativo",
-        data_entrada: newTicket.dataEntrada,
-        prioridade_atendimento: prioridadeAtendimento,
-      })
+      const { data: insertedTicket, error: insertError } = await supabase
+        .from("tickets")
+        .insert({
+          codigo: newTicket.codigo,
+          cpf: cpf,
+          unidade_id: unidadeId,
+          unidade_nome: unit.nome,
+          unidade_tipo: unit.tipo,
+          servico: servico,
+          posicao: posicao,
+          pessoas_frente: pessoasFrente,
+          tempo_estimado: pessoasFrente * 2,
+          status: "ativo",
+          data_entrada: newTicket.dataEntrada,
+          prioridade_atendimento: prioridadeAtendimento,
+        })
+        .select()
+        .single()
 
       if (insertError) {
         console.error("Error saving ticket on Supabase:", insertError)
@@ -389,8 +469,14 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      setActiveTicket(newTicket)
-      localStorage.setItem("filadigital_active_ticket", JSON.stringify(newTicket))
+      // Atualizar o ticket com o ID real do banco
+      const ticketWithRealId = {
+        ...newTicket,
+        id: String(insertedTicket.id),
+      }
+      
+      setActiveTicket(ticketWithRealId)
+      localStorage.setItem("filadigital_active_ticket", JSON.stringify(ticketWithRealId))
       return { success: true }
     } catch (error) {
       console.error("Error entering queue:", error)

@@ -37,7 +37,7 @@ export default function LoginPage() {
 
     if (result.success) {
       toast.success("Login realizado com sucesso!")
-      router.push("/")
+      router.push("/unidades")
     } else {
       toast.error(result.error || "CPF ou senha inválidos")
     }

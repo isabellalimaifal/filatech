@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { UnitCard } from "@/components/unit-card"
 import { EnterQueueDialog } from "@/components/enter-queue-dialog"
+import { ActiveTicketCard } from "@/components/active-ticket-card"
 import { useAuth } from "@/lib/auth-context"
-import { UNITS, getUnitsByType, searchUnits, type Unit } from "@/lib/units-data"
+import { useTicket } from "@/lib/ticket-context"
+import { useUnitsData } from "@/lib/use-units-data"
+import { getUnitsByType, searchUnits, type Unit } from "@/lib/units-data"
 
 const FILTER_OPTIONS = [
   { value: "Todos", label: "Todos" },
@@ -22,6 +25,8 @@ function UnidadesContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isAuthenticated, isLoading: authLoading } = useAuth()
+  const { activeTicket } = useTicket()
+  const { units, isLoading: unitsLoading } = useUnitsData()
   
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedFilter, setSelectedFilter] = useState("Todos")
@@ -32,13 +37,13 @@ function UnidadesContent() {
   useEffect(() => {
     const unitId = searchParams.get("unit")
     if (unitId) {
-      const unit = UNITS.find((u) => u.id === unitId)
+      const unit = units.find((u) => u.id === unitId)
       if (unit && unit.aberto) {
         setSelectedUnit(unit)
         setDialogOpen(true)
       }
     }
-  }, [searchParams])
+  }, [searchParams, units])
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -47,12 +52,12 @@ function UnidadesContent() {
   }, [authLoading, isAuthenticated, router])
 
   const filteredUnits = useMemo(() => {
-    let result = getUnitsByType(selectedFilter)
+    let result = getUnitsByType(selectedFilter, units)
     if (searchQuery) {
       result = searchUnits(searchQuery, result)
     }
     return result
-  }, [selectedFilter, searchQuery])
+  }, [selectedFilter, searchQuery, units])
 
   const handleUnitClick = (unit: Unit) => {
     if (!unit.aberto) return
@@ -71,6 +76,13 @@ function UnidadesContent() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+
+      {/* Active Ticket Card - shown when user has an active ticket */}
+      {activeTicket && (
+        <div className="container mx-auto px-4 py-4">
+          <ActiveTicketCard />
+        </div>
+      )}
 
       <main className="container mx-auto px-4 py-8">
         {/* Page Title */}
