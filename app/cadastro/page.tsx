@@ -55,6 +55,14 @@ export default function CadastroPage() {
     e.preventDefault()
     setIsLoading(true)
 
+    console.log("🔍 [CADASTRO] Dados sendo enviados:", {
+      nome,
+      cpf,
+      telefone,
+      senha: "***",
+      tipoPrioridade: necessidadesEspeciais,
+    })
+
     const result = await register({
       nome,
       cpf,
@@ -62,6 +70,8 @@ export default function CadastroPage() {
       senha,
       tipoPrioridade: necessidadesEspeciais,
     })
+
+    console.log("🔍 [CADASTRO] Resultado:", result)
 
     if (result.success) {
       toast.success("Cadastro realizado com sucesso!")

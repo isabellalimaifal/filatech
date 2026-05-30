@@ -89,7 +89,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (cpf: string, senha: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log("🔍 [AUTH-LOGIN] Tentando login para CPF:", cpf)
       const { data, error } = await findUserByCpf(cpf)
+
+      console.log("🔍 [AUTH-LOGIN] Dados do banco:", {
+        data,
+        error,
+        tipo_prioridade: data?.tipo_prioridade,
+      })
 
       if (error || !data) {
         console.error("Login lookup error:", error)
@@ -109,6 +116,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         tipoPrioridade: data.tipo_prioridade ?? "Nenhuma",
       }
 
+      console.log("🔍 [AUTH-LOGIN] User criado para login:", dbUser)
+
       setUser(dbUser)
       localStorage.setItem("filadigital_user", JSON.stringify(dbUser))
       return { success: true }
@@ -118,8 +127,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const register = async (data: { nome: string; cpf: string; telefone?: string; senha: string }): Promise<{ success: boolean; error?: string }> => {
+  const register = async (data: { nome: string; cpf: string; telefone?: string; senha: string; tipoPrioridade: string }): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log("🔍 [AUTH-REGISTER] Dados recebidos:", {
+        nome: data.nome,
+        cpf: data.cpf,
+        telefone: data.telefone,
+        tipoPrioridade: data.tipoPrioridade,
+      })
+
       const cpfDigits = normalizeCpf(data.cpf)
       const { data: existingUser, error: existingError } = await findUserByCpf(data.cpf)
 
@@ -139,11 +155,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         tipo_prioridade: data.tipoPrioridade,
       }
 
+      console.log("🔍 [AUTH-REGISTER] Payload para inserção:", insertPayload)
+
       const { data: insertedRow, error: insertError } = await supabase
         .from("usuarios")
         .insert(insertPayload)
         .select("id, tipo_prioridade")
         .single()
+
+      console.log("🔍 [AUTH-REGISTER] Resultado da inserção:", {
+        insertedRow,
+        insertError,
+      })
 
       if (insertError) {
         console.error("Register insert error:", insertError)
@@ -160,6 +183,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         telefone: data.telefone ?? undefined,
         tipoPrioridade: insertedRow?.tipo_prioridade ?? data.tipoPrioridade,
       }
+
+      console.log("🔍 [AUTH-REGISTER] User criado:", newUser)
 
       setUser(newUser)
       localStorage.setItem("filadigital_user", JSON.stringify(newUser))

@@ -385,13 +385,21 @@ export function TicketProvider({ children }: { children: ReactNode }) {
 
   const enterQueue = async (unidadeId: string, servico: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log("🔍 [ENTER-QUEUE] Iniciando entrada na fila")
+      console.log("🔍 [ENTER-QUEUE] User:", user)
+      console.log("🔍 [ENTER-QUEUE] user.tipoPrioridade:", user?.tipoPrioridade)
+
       if (!user) return { success: false, error: "Usuário não autenticado." }
 
       const unit = MOCK_UNITS[unidadeId]
       if (!unit) return { success: false, error: "Unidade inválida." }
 
+      console.log("🔍 [ENTER-QUEUE] usuarioTemPrioridadeNaFila:", usuarioTemPrioridadeNaFila(user.tipoPrioridade))
+
       const prioridadeAtendimento: PrioridadeAtendimentoTicket =
         usuarioTemPrioridadeNaFila(user.tipoPrioridade) ? "Prioritário" : "Normal"
+
+      console.log("🔍 [ENTER-QUEUE] prioridadeAtendimento determinada:", prioridadeAtendimento)
 
       const ticketNumber = Math.floor(Math.random() * 9000) + 1000
       // Calculate real position based on actual tickets in database
@@ -460,6 +468,12 @@ export function TicketProvider({ children }: { children: ReactNode }) {
         })
         .select()
         .single()
+
+      console.log("🔍 [ENTER-QUEUE] Ticket inserido no banco:", {
+        insertedTicket,
+        insertError,
+        prioridade_atendimento_enviada: prioridadeAtendimento,
+      })
 
       if (insertError) {
         console.error("Error saving ticket on Supabase:", insertError)

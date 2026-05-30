@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin, Clock, Users, Check } from "lucide-react"
+import { MapPin, Clock, Users, Check, AlertTriangle } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -21,6 +22,8 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { useTicket } from "@/lib/ticket-context"
+import { useAuth } from "@/lib/auth-context"
+import { usuarioTemPrioridadeNaFila } from "@/lib/prioridade"
 import { toast } from "sonner"
 import type { Unit } from "@/lib/units-data"
 
@@ -36,8 +39,11 @@ export function EnterQueueDialog({
   onOpenChange,
 }: EnterQueueDialogProps) {
   const { enterQueue, activeTicket } = useTicket()
+  const { user } = useAuth()
   const [selectedServico, setSelectedServico] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
+
+  const temPrioridade = user ? usuarioTemPrioridadeNaFila(user.tipoPrioridade) : false
 
   const handleEnterQueue = async () => {
     if (!unit || !selectedServico) return
@@ -96,6 +102,19 @@ export function EnterQueueDialog({
               </div>
             </div>
           </div>
+
+          {/* Priority Notice */}
+          {temPrioridade && (
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                <span className="font-medium text-amber-900">Atendimento Prioritário</span>
+              </div>
+              <p className="text-sm text-amber-800">
+                Você será atendido com prioridade especial: {user?.tipoPrioridade}.
+              </p>
+            </div>
+          )}
 
           {/* Service Selection */}
           <FieldGroup>
