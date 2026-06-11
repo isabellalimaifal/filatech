@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Header } from "@/components/header"
 import { useAuth } from "@/lib/auth-context"
 import { toast } from "sonner"
+import { Logo } from "@/components/logo"
 
 const MENU_ITEMS = [
   {
@@ -148,23 +149,8 @@ export default function PerfilPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                className="h-4 w-4 text-primary-foreground"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-              </svg>
-            </div>
-            <span className="font-semibold text-foreground">FilaTech</span>
-            <span className="text-primary text-sm">Filas virtuais</span>
+          <div className="flex items-center justify-center mb-2">
+            <Logo size="sm" />
           </div>
           <p className="text-xs text-muted-foreground">
             Versão 1.0.0 • FilaTech — serviços públicos

@@ -11,6 +11,7 @@ import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/lib/auth-context"
 import { toast } from "sonner"
+import { Logo } from "@/components/logo"
 
 function formatCPF(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 11)
@@ -47,27 +48,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
-      {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 mb-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            className="h-7 w-7 text-primary-foreground"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
-          </svg>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xl font-bold text-foreground">FilaTech</span>
-          <span className="text-xs font-medium text-primary">Filas virtuais</span>
-        </div>
-      </Link>
+      <Logo href="/" size="lg" className="mb-8" />
 
       <Card className="w-full max-w-md shadow-lg border-0">
         <CardContent className="p-8">

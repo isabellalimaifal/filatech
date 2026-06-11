@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Shield, Users, PhoneCall, Clock, AlertTriangle } from "lucide-react"
+import { Users, PhoneCall, Clock, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase-client"
 import { toast } from "sonner"
+import { Logo } from "@/components/logo"
 
 interface QueueTicket {
   id: string
@@ -206,12 +207,12 @@ export default function AdminPage() {
       <header className="sticky top-0 z-50 border-b border-slate-700 bg-slate-800/95 backdrop-blur">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600">
-              <Shield className="h-5 w-5 text-white" />
+            <div className="rounded-lg bg-white px-2 py-1">
+              <Logo size="sm" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white">
-                Painel de Controle - FilaTech
+                Painel de Controle
               </h1>
               <p className="text-xs text-slate-400">
                 Gerenciamento de Atendimento

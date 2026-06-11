@@ -6,6 +6,7 @@ import { User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
+import { Logo } from "@/components/logo"
 
 const NAV_ITEMS = [
   { href: "/unidades", label: "Início" },
@@ -19,28 +20,8 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/unidades" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              className="h-6 w-6 text-primary-foreground"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="3" y="3" width="7" height="7" rx="1" />
-              <rect x="14" y="3" width="7" height="7" rx="1" />
-              <rect x="3" y="14" width="7" height="7" rx="1" />
-              <rect x="14" y="14" width="7" height="7" rx="1" />
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-foreground">FilaTech</span>
-            <span className="text-xs font-medium text-primary">Filas virtuais</span>
-          </div>
-        </Link>
+      <div className="container mx-auto flex h-24 items-center justify-between px-4">
+        <Logo href="/unidades" size="md" />
 
         {/* Navigation — visível em telas pequenas com rolagem horizontal */}
         <nav className="flex max-w-[45%] sm:max-w-none items-center gap-1 overflow-x-auto md:overflow-visible [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-1 md:justify-center">

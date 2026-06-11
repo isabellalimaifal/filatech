@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Shield, LogIn, Eye, EyeOff } from "lucide-react"
+import { LogIn, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,6 +12,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase-client"
 import { toast } from "sonner"
+import { Logo } from "@/components/logo"
 
 function formatCPF(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 11)
@@ -65,18 +66,12 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 p-4">
-      {/* Logo */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/25">
-          <Shield className="h-8 w-8 text-white" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-2xl font-bold text-white">FilaTech</span>
-          <span className="text-sm font-medium text-blue-400">
-            Painel do Atendente
-          </span>
-        </div>
+      <div className="mb-8 rounded-xl bg-white px-4 py-3 shadow-lg">
+        <Logo size="xl" />
       </div>
+      <p className="-mt-4 mb-8 text-sm font-medium text-blue-400">
+        Painel do Atendente
+      </p>
 
       <Card className="w-full max-w-md shadow-2xl border-slate-700 bg-slate-800">
         <CardContent className="p-8">
