@@ -207,9 +207,7 @@ export default function AdminPage() {
       <header className="sticky top-0 z-50 border-b border-slate-700 bg-slate-800/95 backdrop-blur">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-white px-2 py-1">
-              <Logo size="sm" variant="admin" />
-            </div>
+            <Logo size="sm" variant="admin" />
             <div>
               <h1 className="text-lg font-bold text-white">
                 Painel de Controle
