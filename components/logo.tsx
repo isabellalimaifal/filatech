@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import logoImage from "@/img/logofilatech.png"
+import logoAdminImage from "@/img/logoadmfilatech.png"
 
 const sizeClasses = {
   sm: "h-14",
@@ -14,12 +15,13 @@ interface LogoProps {
   size?: keyof typeof sizeClasses
   className?: string
   href?: string
+  variant?: "default" | "admin"
 }
 
-export function Logo({ size = "md", className, href }: LogoProps) {
+export function Logo({ size = "md", className, href, variant = "default" }: LogoProps) {
   const image = (
     <Image
-      src={logoImage}
+      src={variant === "admin" ? logoAdminImage : logoImage}
       alt="FilaTech — Sistemas de Filas Virtuais Inteligentes"
       className={cn("w-auto object-contain", sizeClasses[size], className)}
       priority

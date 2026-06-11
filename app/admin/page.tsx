@@ -208,7 +208,7 @@ export default function AdminPage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-white px-2 py-1">
-              <Logo size="sm" />
+              <Logo size="sm" variant="admin" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white">

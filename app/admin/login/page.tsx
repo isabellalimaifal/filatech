@@ -66,8 +66,8 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 p-4">
-      <div className="mb-8 rounded-xl bg-white px-4 py-3 shadow-lg">
-        <Logo size="xl" />
+      <div className="mb-8">
+        <Logo size="xl" variant="admin" />
       </div>
       <p className="-mt-4 mb-8 text-sm font-medium text-blue-400">
         Painel do Atendente
